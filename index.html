@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .fraud {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .legit {
+            background-color: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fraud Detection Results</h1>
+    <p>Below is the list of transactions and their fraud status:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Account ID</th>
+                <th>Amount</th>
+                <th>Timestamp</th>
+                <th>Origin Country</th>
+                <th>Destination Country</th>
+                <th>Balance</th>
+                <th>Fraud Status</th>
+                <th>Processed At</th>
+            </tr>
+        </thead>
+        <tbody id="transaction-table">
+        </tbody>
+    </table>
+    <script>
+        // Load JSON data
+        fetch("fraud_results_20241210214622.json")
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById("transaction-table");
+                data.forEach(transaction => {
+                    const row = document.createElement("tr");
+                    
+                    // Highlight fraudulent rows
+                    if (transaction.fraud_status !== "LEGIT") {
+                        row.classList.add("fraud");
+                    } else {
+                        row.classList.add("legit");
+                    }
+
+                    // Populate table cells
+                    row.innerHTML = `
+                        <td>${transaction.account_id}</td>
+                        <td>${transaction.amount}</td>
+                        <td>${transaction.timestamp}</td>
+                        <td>${transaction.origin_country}</td>
+                        <td>${transaction.destination_country}</td>
+                        <td>${transaction.balance}</td>
+                        <td>${transaction.fraud_status}</td>
+                        <td>${transaction.processed_at}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error loading JSON:", error));
+    </script>
+</body>
+</html>
